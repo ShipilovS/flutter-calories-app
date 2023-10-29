@@ -29,17 +29,17 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
+      supportedLocales: [
+        const Locale('ru', 'RU')
+      ],
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('ru', 'RU')
-      ],
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Учет калорий'),
+          title: const Text('Учет калорий'), // не показыватся нигде?
           backgroundColor: Colors.blueAccent,
         ),
         body: const Padding(
