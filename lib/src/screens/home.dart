@@ -1,4 +1,11 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calories_app/src/dio_helpler.dart';
+import 'package:flutter_calories_app/src/models/fruit.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 // import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -11,11 +18,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final dio = Dio();
+
   DateTime _selectedDate = DateTime.now();
   int currentPageIndex = 0;
   String currentTitle = 'Продукты';
   NavigationDestinationLabelBehavior labelBehavior =
       NavigationDestinationLabelBehavior.alwaysShow;
+  late Future<List<UserFruit>>? _user_fruits;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _user_fruits = DioHelper().getUserFruits(
+        {
+          'selected_date': _selectedDate
+        }
+    );
+  }
 
   List title_lists = ['Продукты', 'Календарь', 'Корзина'];
   @override
@@ -77,17 +98,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {
                         _selectedDate = newDate;
                       });
+                      _user_fruits = DioHelper().getUserFruits({
+                        'selected_date': _selectedDate
+                      });
                     },
                     child: Text("Выбрать дату"),
                   ),
                   Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.all(8),
-                      children:[
-                        Text("A"),
-                        Text("B"),
-                        Text("C"),
-                      ],
+                    child: FutureBuilder(
+                      future: _user_fruits,
+                      builder: (context, snapshot) {
+                        if (snapshot.data == null) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                leading: const Icon(Icons.list),
+                                  trailing: Icon(Icons.arrow_right),
+                                  title: Text("${snapshot.data![index].name.toString()}"),
+                                // onTap: ,
+                              ),
+                            );
+                          });
+                        }
+                      },
                     ),
                   ),
                 ],
