@@ -3,6 +3,7 @@ import 'package:flutter_calories_app/src/home_boarding.dart';
 import 'package:flutter_calories_app/src/screens/home.dart';
 import 'package:flutter_calories_app/src/screens/login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   await dotenv.load();
@@ -28,6 +29,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('ru', 'RU')
+      ],
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Учет калорий'),
@@ -35,7 +44,7 @@ class MyApp extends StatelessWidget {
         ),
         body: const Padding(
           padding: EdgeInsets.all(16.0),
-          child: const LoginScreen(),
+          child: LoginScreen(),
         ),
       ),
     );
