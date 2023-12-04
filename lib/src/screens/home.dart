@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calories_app/src/dio_helpler.dart';
 import 'package:flutter_calories_app/src/models/fruit.dart';
+import 'package:flutter_calories_app/src/screens/form_fruit_create.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 // import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -25,7 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String currentTitle = 'Продукты';
   NavigationDestinationLabelBehavior labelBehavior =
       NavigationDestinationLabelBehavior.alwaysShow;
-  late Future<List<UserFruit>>? _user_fruits;
+  late Future<List<Fruit>>? _user_fruits;
+  late Future<List<Fruit>>? _fruits;
 
   @override
   void initState() {
@@ -36,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
           'selected_date': _selectedDate
         }
     );
+
+    _fruits = DioHelper().getFruits({});
   }
 
   List title_lists = ['Продукты', 'Календарь', 'Корзина'];
@@ -52,6 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
             onDestinationSelected: (int index) {
               setState(() {
                 currentPageIndex = index;
+                if (index == 0) {
+                  _fruits = DioHelper().getFruits({});
+                };
                 // currentTitle = title_lists[index];
               });
             },
@@ -72,10 +79,48 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
         ),
           body: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 22),
-              alignment: Alignment.center,
-              child: const Text('Продукты'),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 22),
+            alignment: Alignment.center,
+            child: Column(
+              children: [
+                Expanded(
+                  child: FutureBuilder(
+                    future: _fruits,
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            print(snapshot.data![index].size_gram);
+                            return Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                leading: const Icon(Icons.list),
+                                // Добавить флаг на беке, что выбран в избранное
+                                trailing: IconButton(onPressed: () {},
+                                    selectedIcon: Icon(Icons.bookmark),
+                                    icon: const Icon(Icons.bookmark_border)
+                              ),
+                                title: Text("${snapshot.data![index].name.toString()}"),
+                                subtitle: Text(
+                                    "на ${snapshot.data![index].size_gram.toString()}гр - "
+                                        "${snapshot.data![index].kilocalories.toString()} килокалорий"
+                                ),
+                                // onTap: ,
+                              ),
+                            );
+                          });
+                        }
+                      },
+                    ),
+                  )
+                ]
+              ),
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 55),
@@ -119,8 +164,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Container(
                               color: Colors.white,
                               child: ListTile(
+                                // обернуть в кнопку
                                 leading: const Icon(Icons.list),
-                                  trailing: Icon(Icons.arrow_right),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, '/fruit_show',
+                                          arguments: {'id': snapshot.data![index].id},
+                                        );
+                                      }, icon: const Icon(Icons.info)),
+                                      IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+                                    ],
+                                  ),
                                   title: Text("${snapshot.data![index].name.toString()}"),
                                 // onTap: ,
                               ),
@@ -140,7 +197,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ][currentPageIndex],
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/form_fruit_create');
+            },
             child: const Icon(Icons.add),
           )
       );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calories_app/src/home_boarding.dart';
+import 'package:flutter_calories_app/src/screens/form_fruit_create.dart';
+import 'package:flutter_calories_app/src/screens/fruit_show.dart';
 import 'package:flutter_calories_app/src/screens/home.dart';
 import 'package:flutter_calories_app/src/screens/login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         '/boarding': (context) => const HomeBoarding(),
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
+        '/form_fruit_create': (context) => const FormFruitCreate(),
+        '/fruit_show': (context) => FruitShowScreen(),
+        // arguments: ModalRoute.of(context)?.settings.arguments
       },
       initialRoute: '/boarding',
       theme: ThemeData(

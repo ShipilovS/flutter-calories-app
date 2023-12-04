@@ -27,7 +27,7 @@ class DioHelper {
     );
   }
 
-  Future<List<UserFruit>> getUserFruits(Map<String, dynamic> params) async {
+  Future<List<Fruit>> getUserFruits(Map<String, dynamic> params) async {
     try {
       final response = await dio.get(
         "${dio.options.baseUrl}/api/fruits/fruits_by_date",
@@ -41,7 +41,31 @@ class DioHelper {
       if (response.statusCode == 200) {
         List jsonResponse = response.data["data"];
         print(jsonResponse);
-        return jsonResponse.map((json) => UserFruit.fromJson(json)).toList();
+        return jsonResponse.map((json) => Fruit.fromJson(json)).toList();
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      print('[Error] => ${e}');
+      throw e;
+    }
+  }
+
+  Future<List<Fruit>> getFruits(Map<String, dynamic> params) async {
+    try {
+      final response = await dio.get(
+          "${dio.options.baseUrl}/api/fruits",
+          options: Options(
+            headers: {
+              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
+            },
+          ),
+          queryParameters: params
+      );
+      if (response.statusCode == 200) {
+        List jsonResponse = response.data["data"];
+        print(jsonResponse);
+        return jsonResponse.map((json) => Fruit.fromJson(json)).toList();
       } else {
         throw Exception('Error');
       }
