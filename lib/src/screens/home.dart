@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _fruits = DioHelper().getFruits({});
   }
 
-  List title_lists = ['Продукты', 'Календарь', 'Корзина'];
+  List title_lists = ['Продукты', 'Календарь', 'Избранные'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationDestination(
                 selectedIcon: Icon(Icons.bookmark),
                 icon: Icon(Icons.bookmark_border),
-                label: 'Корзина',
+                label: 'Избранные',
               ),
             ],
         ),
