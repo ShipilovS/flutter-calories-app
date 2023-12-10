@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calories_app/src/dio_helpler.dart';
+import 'package:flutter_calories_app/src/models/fruit.dart';
 
 class FormFruitCreate extends StatefulWidget {
   const FormFruitCreate({super.key});
@@ -9,6 +11,15 @@ class FormFruitCreate extends StatefulWidget {
 
 class _FormFruitCreateState extends State<FormFruitCreate> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late Future<List<Fruit>>? _fruits;
+  Fruit? selectedFruit;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _fruits = DioHelper().getFruits({});
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +33,56 @@ class _FormFruitCreateState extends State<FormFruitCreate> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-              hintText: 'Enter Something',
-                contentPadding: EdgeInsets.all(20.0),
-              ),
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+            FutureBuilder(
+              future: _fruits,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var data = snapshot.data!;
+                  return DropdownButton<Fruit?>(
+                    // Initial Value
+                    value: selectedFruit,
+
+                    // Down Arrow Icon
+                    icon: const Icon(Icons.keyboard_arrow_down),
+
+                    // Array list of items
+                     items: data.map((Fruit user) {
+                      return DropdownMenuItem<Fruit>(
+                        value: user,
+                        child: Text(
+                          user.name,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      );
+                    }).toList(),
+                    // After selecting the desired option,it will
+                    // change button value to selected value
+                    onChanged: (Fruit? fruit) {
+                      setState(() {
+                        selectedFruit = fruit!;
+                      });
+                    },
+                  );
+                } else {
+                  return const CircularProgressIndicator();
                 }
-                return null;
               },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  DioHelper().createUserFriut(
+                    {
+                      'fruit_id': selectedFruit?.id // Ошибка?
+                    }
+                  );
+                  // Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/home');
+                  //
+                },
+                child: const Text('Создать'),
+              ),
             ),
           ],
         ),

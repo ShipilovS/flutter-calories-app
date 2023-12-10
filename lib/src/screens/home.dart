@@ -58,6 +58,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 currentPageIndex = index;
                 if (index == 0) {
                   _fruits = DioHelper().getFruits({});
+                } else if (index == 1) {
+                  _user_fruits = DioHelper().getUserFruits({
+                    'selected_date': _selectedDate ?? DateTime.now()
+                  });
                 };
                 // currentTitle = title_lists[index];
               });
@@ -96,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         return ListView.builder(
                           itemCount: snapshot.data!.length,
                           itemBuilder: (BuildContext context, int index) {
-                            print(snapshot.data![index].size_gram);
                             return Container(
                               color: Colors.white,
                               child: ListTile(

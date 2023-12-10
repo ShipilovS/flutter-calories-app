@@ -21,7 +21,6 @@ class _FruitShowScreenState extends State<FruitShowScreen> {
   Widget build(BuildContext context) {
     // переместить в конструктор
     final args = ModalRoute.of(context)!.settings.arguments;
-    print(args);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Информация о продукте'), // не показыватся нигде?
