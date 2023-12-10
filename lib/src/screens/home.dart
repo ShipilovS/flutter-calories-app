@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String currentTitle = 'Продукты';
   NavigationDestinationLabelBehavior labelBehavior =
       NavigationDestinationLabelBehavior.alwaysShow;
-  late Future<List<Fruit>>? _user_fruits;
+  late Future<List<UserFruit>>? _user_fruits;
   late Future<List<Fruit>>? _fruits;
 
   @override
@@ -114,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     "на ${snapshot.data![index].size_gram.toString()}гр - "
                                         "${snapshot.data![index].kilocalories.toString()} килокалорий"
                                 ),
+
                                 // onTap: ,
                               ),
                             );
@@ -156,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FutureBuilder(
                       future: _user_fruits,
                       builder: (context, snapshot) {
+                        print(_selectedDate);
                         if (snapshot.data == null) {
                           return Center(
                             child: CircularProgressIndicator(),
@@ -164,8 +166,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           return ListView.builder(
                           itemCount: snapshot.data!.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              color: Colors.white,
+                            final item = snapshot.data![index];
+                            return Dismissible(
+                              // color: Colors.white,
+                              key: UniqueKey(), // Key(item)
+                              onDismissed: (direction) {
+                                setState(() {
+                                  // _fruits.removeAt(index);
+                                  DioHelper().destroyUserFruit(item.id);
+                                });
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  setState(() {
+                                    _user_fruits = DioHelper().getUserFruits(
+                                        {
+                                          'selected_date': _selectedDate
+                                        }
+                                    );
+                                  });
+                                });
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(content: Text('${item.fruit_name} Удален')));
+                              },
+                              background: Container(color: Colors.red),
                               child: ListTile(
                                 // обернуть в кнопку
                                 leading: const Icon(Icons.list),
@@ -175,13 +198,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       IconButton(onPressed: () {
                                         Navigator.pushNamed(
                                             context, '/fruit_show',
-                                          arguments: {'id': snapshot.data![index].id},
+                                          arguments: {'id': snapshot.data![index].fruit_id},
                                         );
                                       }, icon: const Icon(Icons.info)),
-                                      IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+                                      // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
                                     ],
                                   ),
-                                  title: Text("${snapshot.data![index].name.toString()}"),
+                                  title: Text("${snapshot.data![index].fruit_name.toString()}"),
                                 // onTap: ,
                               ),
                             );
