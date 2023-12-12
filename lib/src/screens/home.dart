@@ -127,10 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 55),
+              padding: EdgeInsets.symmetric(vertical: 15),
               alignment: Alignment.center,
               child: Column(
                 children: [
+                  Text(
+                    "Всего ккалорий - \n",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text(
                       "${DateFormat.yMMMMd().format(_selectedDate)}",
                   ),
@@ -170,23 +174,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Dismissible(
                               // color: Colors.white,
                               key: UniqueKey(), // Key(item)
-                              onDismissed: (direction) {
-                                setState(() {
-                                  // _fruits.removeAt(index);
-                                  DioHelper().destroyUserFruit(item.id);
-                                });
-                                Future.delayed(const Duration(milliseconds: 500), () {
-                                  setState(() {
-                                    _user_fruits = DioHelper().getUserFruits(
-                                        {
-                                          'selected_date': _selectedDate
-                                        }
-                                    );
-                                  });
-                                });
-
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(content: Text('${item.fruit_name} Удален')));
+                              onDismissed: (direction) async {
+                                // setState(() {
+                                //   DioHelper().destroyUserFruit(item.id);
+                                //   _user_fruits = DioHelper().getUserFruits(
+                                //       {
+                                //         'selected_date': _selectedDate
+                                //       }
+                                //   );
+                                // });
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item.fruit_name} Удален')));
+                                await DioHelper().destroyUserFruit(item.id);
+                                // Future.delayed(const Duration(milliseconds: 10), () {
+                                // setState(() {
+                                //   _user_fruits = null;
+                                // });
+                                // });
                               },
                               background: Container(color: Colors.red),
                               child: ListTile(

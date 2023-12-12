@@ -40,6 +40,7 @@ class _FormFruitCreateState extends State<FormFruitCreate> {
                   var data = snapshot.data!;
                   return DropdownButton<Fruit?>(
                     // Initial Value
+                    isExpanded: true,
                     value: selectedFruit,
 
                     // Down Arrow Icon
