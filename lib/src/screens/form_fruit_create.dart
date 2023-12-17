@@ -78,8 +78,8 @@ class _FormFruitCreateState extends State<FormFruitCreate> {
                       'fruit_id': selectedFruit?.id // Ошибка?
                     }
                   );
-                  // Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/home');
+                  Navigator.pop(context);
+                  // Navigator.pushReplacementNamed(context, '/home');
                   //
                 },
                 child: const Text('Создать'),

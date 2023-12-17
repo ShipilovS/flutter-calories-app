@@ -227,7 +227,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ][currentPageIndex],
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/form_fruit_create');
+              Navigator.pushNamed(context, '/form_fruit_create').then((_)
+              => setState(() {
+                _user_fruits = DioHelper().getUserFruits(
+                    {
+                      'selected_date': _selectedDate
+                    }
+                );
+              })
+              );
             },
             child: const Icon(Icons.add),
           )
