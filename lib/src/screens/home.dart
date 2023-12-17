@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -171,43 +172,44 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: snapshot.data!.length,
                           itemBuilder: (BuildContext context, int index) {
                             final item = snapshot.data![index];
-                            return Dismissible(
-                              // color: Colors.white,
-                              key: UniqueKey(), // Key(item)
-                              onDismissed: (direction) async {
-                                // setState(() {
-                                //   DioHelper().destroyUserFruit(item.id);
-                                //   _user_fruits = DioHelper().getUserFruits(
-                                //       {
-                                //         'selected_date': _selectedDate
-                                //       }
-                                //   );
-                                // });
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item.fruit_name} Удален')));
-                                await DioHelper().destroyUserFruit(item.id);
-                                // Future.delayed(const Duration(milliseconds: 10), () {
-                                // setState(() {
-                                //   _user_fruits = null;
-                                // });
-                                // });
-                              },
-                              background: Container(color: Colors.red),
+                            return Container(
+                              color: Colors.white,
                               child: ListTile(
-                                // обернуть в кнопку
                                 leading: const Icon(Icons.list),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, '/fruit_show',
-                                          arguments: {'id': snapshot.data![index].fruit_id},
-                                        );
-                                      }, icon: const Icon(Icons.info)),
-                                      // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
-                                    ],
-                                  ),
-                                  title: Text("${snapshot.data![index].fruit_name.toString()}"),
+                                // Добавить флаг на беке, что выбран в избранное
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Удаление продукта"),
+                                            content: Text("Вы действительно хотите удалить продукт?"),
+                                            actions: [
+                                              TextButton(
+                                                child: Text("Отменить"),
+                                                onPressed:  () { Navigator.pop(context); },
+                                              ),
+                                              TextButton(
+                                                child: Text("Удалить"),
+                                                onPressed: () {
+                                                  DioHelper().destroyUserFruit(item.id);
+                                                  setState(() {
+                                                    _user_fruits = DioHelper().getUserFruits({
+                                                      'selected_date': _selectedDate
+                                                    });
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete)
+                                ),
+                                title: Text("${snapshot.data![index].fruit_name.toString()}"),
                                 // onTap: ,
                               ),
                             );
@@ -228,13 +230,13 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               Navigator.pushNamed(context, '/form_fruit_create').then((_)
-              => setState(() {
-                _user_fruits = DioHelper().getUserFruits(
-                    {
-                      'selected_date': _selectedDate
-                    }
-                );
-              })
+                => setState(() {
+                  _user_fruits = DioHelper().getUserFruits(
+                      {
+                        'selected_date': _selectedDate
+                      }
+                  );
+                })
               );
             },
             child: const Icon(Icons.add),
