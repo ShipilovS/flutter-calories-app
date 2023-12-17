@@ -32,4 +32,3 @@ class _FruitShowScreenState extends State<FruitShowScreen> {
     );
   }
 }
-

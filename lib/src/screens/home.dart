@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       NavigationDestinationLabelBehavior.alwaysShow;
   late Future<List<UserFruit>>? _user_fruits;
   late Future<List<Fruit>>? _fruits;
+  late Future<List<Fruit>>? _favorites;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'selected_date': _selectedDate
         }
     );
-
+    _favorites = DioHelper().getFavorites({});
     _fruits = DioHelper().getFruits({});
   }
 
@@ -61,8 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   _fruits = DioHelper().getFruits({});
                 } else if (index == 1) {
                   _user_fruits = DioHelper().getUserFruits({
-                    'selected_date': _selectedDate ?? DateTime.now()
+                    'selected_date': _selectedDate
                   });
+                } else if (index == 2) {
+                  _favorites = DioHelper().getFavorites({});
                 };
                 // currentTitle = title_lists[index];
               });
@@ -84,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
         ),
           body: <Widget>[
-          Container(
+            Container(
             padding: EdgeInsets.symmetric(vertical: 22),
             alignment: Alignment.center,
             child: Column(
@@ -93,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FutureBuilder(
                     future: _fruits,
                     builder: (context, snapshot) {
+                      print(snapshot.data);
                       if (snapshot.data == null) {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -106,10 +110,41 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: ListTile(
                                 leading: const Icon(Icons.list),
                                 // Добавить флаг на беке, что выбран в избранное
-                                trailing: IconButton(onPressed: () {},
-                                    selectedIcon: Icon(Icons.bookmark),
-                                    icon: const Icon(Icons.bookmark_border)
-                              ),
+                                trailing: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child:  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            if (snapshot.data![index].is_favorite) {
+                                              DioHelper().destroyFavorite(snapshot.data![index].id.toInt());
+                                            } else {
+                                              DioHelper().createFavorite({
+                                                'fruit_id': snapshot.data![index].id
+                                              });
+                                            }
+                                            setState(() {
+                                              _fruits = DioHelper().getFruits({});
+                                            });
+                                          },
+                                          icon: Icon(snapshot.data![index].is_favorite ? Icons.favorite : Icons.favorite_border )
+                                      ),
+                                      IconButton(onPressed: () {
+                                        Navigator.pushNamed(
+                                          context, '/fruit_show',
+                                          arguments: {'id': snapshot.data![index].id},
+                                        );
+                                      }, icon: const Icon(Icons.info)),
+                                      // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+                                    ],
+                                  ),
+                                ),
+                                    // IconButton(
+                                    //   onPressed: () {},
+                                    //   selectedIcon: Icon(Icons.bookmark),
+                                    //   icon: const Icon(Icons.bookmark_border
+                                    // )
                                 title: Text("${snapshot.data![index].name.toString()}"),
                                 subtitle: Text(
                                     "на ${snapshot.data![index].size_gram.toString()}гр - "
@@ -224,7 +259,36 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: EdgeInsets.symmetric(vertical: 22),
               alignment: Alignment.center,
-              child: const Text('Избранные продукты'),
+              child: Column(
+                  children: [
+                    Expanded(
+                      child: FutureBuilder(
+                        future: _favorites,
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  color: Colors.white,
+                                  child: ListTile(
+                                    leading: const Icon(Icons.list),
+                                    // Добавить флаг на беке, что выбран в избранное
+                                    title: Text("${snapshot.data![index].name.toString()}"),
+                                    // onTap: ,
+                                  ),
+                                );
+                              });
+                            }
+                        },
+                      ),
+                    )
+                  ]
+              ),
             ),
           ][currentPageIndex],
           floatingActionButton: FloatingActionButton(

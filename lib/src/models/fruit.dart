@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:intl/intl.dart';
 
 class Fruit {
@@ -5,12 +7,14 @@ class Fruit {
   final String name;
   final String size_gram;
   final String kilocalories;
+  final bool is_favorite; // bool
 
   const Fruit({
     required this.id,
     required this.name,
     required this.size_gram,
-    required this.kilocalories
+    required this.kilocalories,
+    required this.is_favorite
   });
 
   factory Fruit.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,7 @@ class Fruit {
       name:         json['name']            == null ? "" : json['name'],
       size_gram:    json['size_gram']       == null ? "" : json['size_gram'],
       kilocalories: json['kilocalories']    == null ? "" : json['kilocalories'],
+      is_favorite:  json['is_favorite']     == null ? false : json['is_favorite'],
     );
   }
 
@@ -28,6 +33,7 @@ class Fruit {
       'name': name,
       'size_gram': size_gram,
       'kilocalories': kilocalories,
+      'is_favorite': is_favorite,
     };
   }
 }
