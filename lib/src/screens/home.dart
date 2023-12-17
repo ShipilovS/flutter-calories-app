@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calories_app/src/dio_helpler.dart';
 import 'package:flutter_calories_app/src/models/fruit.dart';
 import 'package:flutter_calories_app/src/screens/form_fruit_create.dart';
+import 'package:flutter_calories_app/src/screens/fruit_show.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 // import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -133,7 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       IconButton(onPressed: () {
                                         Navigator.pushNamed(
                                           context, '/fruit_show',
-                                          arguments: {'id': snapshot.data![index].id},
+                                          arguments: {
+                                            'id':           snapshot.data![index].id,
+                                            'name':         snapshot.data![index].name,
+                                            'description':  snapshot.data![index].description
+                                          },
                                         );
                                       }, icon: const Icon(Icons.info)),
                                       // IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),

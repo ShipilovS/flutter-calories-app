@@ -188,4 +188,27 @@ class DioHelper {
       throw e;
     }
   }
+
+  Future<Fruit> getFruit(int id) async {
+    try {
+      final response = await dio.get(
+        "${dio.options.baseUrl}/api/fruits/${id.toInt()}",
+        options: Options(
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = response.data['data'];
+        print(jsonResponse);
+        return Fruit.fromJson(jsonResponse);
+      } else {
+        throw Exception('Error');
+      }
+    } on DioException catch (e) {
+      print('[Error] => ${e}');
+      throw e;
+    }
+  }
 }

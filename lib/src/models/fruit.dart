@@ -8,13 +8,15 @@ class Fruit {
   final String size_gram;
   final String kilocalories;
   final bool is_favorite; // bool
+  final String description;
 
   const Fruit({
     required this.id,
     required this.name,
     required this.size_gram,
     required this.kilocalories,
-    required this.is_favorite
+    required this.is_favorite,
+    required this.description,
   });
 
   factory Fruit.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class Fruit {
       size_gram:    json['size_gram']       == null ? "" : json['size_gram'],
       kilocalories: json['kilocalories']    == null ? "" : json['kilocalories'],
       is_favorite:  json['is_favorite']     == null ? false : json['is_favorite'],
+      description:  json['description']     == null ? false : json['description'],
     );
   }
 
@@ -34,6 +37,7 @@ class Fruit {
       'size_gram': size_gram,
       'kilocalories': kilocalories,
       'is_favorite': is_favorite,
+      'description': description,
     };
   }
 }
