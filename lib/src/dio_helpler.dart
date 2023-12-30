@@ -145,7 +145,7 @@ class DioHelper {
     }
   }
 
-  Future<UserFruit> destroyUserFruit(int id) async {
+  Future<void> destroyUserFruit(int id) async {
     try {
       final response = await dio.delete(
           "${dio.options.baseUrl}/api/fruits/${id.toInt()}/destroy_user_fruit",
@@ -156,8 +156,7 @@ class DioHelper {
           ),
       );
       if (response.statusCode == 204) {
-        var jsonResponse = response.data['data'];
-        return UserFruit.fromJson(jsonResponse);
+        return;
       } else {
         throw Exception('Error');
       }
