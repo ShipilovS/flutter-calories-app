@@ -72,13 +72,21 @@ class _FormFruitCreateState extends State<FormFruitCreate> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: () {
-                  DioHelper().createUserFriut(
+                onPressed: () async {
+                  await DioHelper().createUserFriut(
                     {
                       'fruit_id': selectedFruit?.id // Ошибка?
                     }
                   );
                   Navigator.pop(context);
+                  // setState(() {
+                  //   _fruits = DioHelper().getFruits({});
+                  // });
+                  // Navigator.pushNamed(context, '/home').then((_)
+                  //   => setState(() {
+                  //     _fruits = DioHelper().getFruits({});
+                  //   })
+                  // );
                   // Navigator.pushReplacementNamed(context, '/home');
                   //
                 },

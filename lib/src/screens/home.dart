@@ -97,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FutureBuilder(
                     future: _fruits,
                     builder: (context, snapshot) {
-                      print(snapshot.data);
                       if (snapshot.data == null) {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -173,10 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Text(
-                    "Всего ккалорий - \n",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
                       "${DateFormat.yMMMMd().format(_selectedDate)}",
                   ),
                   ElevatedButton(
@@ -202,7 +197,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: FutureBuilder(
                       future: _user_fruits,
                       builder: (context, snapshot) {
-                        print(_selectedDate);
                         if (snapshot.data == null) {
                           return Center(
                             child: CircularProgressIndicator(),
@@ -232,8 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               TextButton(
                                                 child: Text("Удалить"),
-                                                onPressed: () {
-                                                  DioHelper().destroyUserFruit(item.id);
+                                                onPressed: () async {
+                                                  await DioHelper().destroyUserFruit(item.id);
                                                   setState(() {
                                                     _user_fruits = DioHelper().getUserFruits({
                                                       'selected_date': _selectedDate

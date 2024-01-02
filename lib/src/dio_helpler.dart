@@ -86,7 +86,6 @@ class DioHelper {
       );
       if (response.statusCode == 200) {
         List jsonResponse = response.data["data"];
-        print(jsonResponse);
         return jsonResponse.map((json) => Fruit.fromJson(json)).toList();
       } else {
         throw Exception('Error');
@@ -122,7 +121,7 @@ class DioHelper {
     }
   }
 
-  Future<Fruit> createFavorite(Map<String, dynamic> params) async {
+  Future<void> createFavorite(Map<String, dynamic> params) async {
     try {
       final response = await dio.post(
           "${dio.options.baseUrl}/api/favorites",
@@ -134,8 +133,7 @@ class DioHelper {
         queryParameters: params
       );
       if (response.statusCode == 201) {
-        var jsonResponse = response.data["data"];
-        return Fruit.fromJson(jsonResponse as Map<String, dynamic>);
+        print("Successful created Favorite");
       } else {
         throw Exception('Error');
       }
@@ -166,7 +164,7 @@ class DioHelper {
     }
   }
 
-  Future<Fruit> destroyFavorite(int id) async {
+  Future<void> destroyFavorite(int id) async {
     try {
       final response = await dio.delete(
         "${dio.options.baseUrl}/api/favorites/${id.toInt()}",
@@ -177,8 +175,7 @@ class DioHelper {
         ),
       );
       if (response.statusCode == 204) {
-        var jsonResponse = response.data['data'];
-        return Fruit.fromJson(jsonResponse);
+        print("Successful destroyed");
       } else {
         throw Exception('Error');
       }
@@ -200,7 +197,6 @@ class DioHelper {
       );
       if (response.statusCode == 200) {
         var jsonResponse = response.data['data'];
-        print(jsonResponse);
         return Fruit.fromJson(jsonResponse);
       } else {
         throw Exception('Error');

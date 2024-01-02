@@ -25,8 +25,8 @@ class Fruit {
       name:         json['name']            == null ? "" : json['name'],
       size_gram:    json['size_gram']       == null ? "" : json['size_gram'],
       kilocalories: json['kilocalories']    == null ? "" : json['kilocalories'],
-      is_favorite:  json['is_favorite']     == null ? false : json['is_favorite'],
-      description:  json['description']     == null ? false : json['description'],
+      is_favorite:  json['is_favorite']     == false ? false : true,
+      description:  json['description']     == null ? "" : json['description'],
     );
   }
 
