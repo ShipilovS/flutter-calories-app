@@ -18,9 +18,10 @@ class DioHelper {
     );
     dio.interceptors.add(
       InterceptorsWrapper(
-          onRequest: (RequestOptions requestOptions, RequestInterceptorHandler handler) {
+          onRequest: (RequestOptions requestOptions, RequestInterceptorHandler handler) async {
+            String token = await SessionManager().get('token');
             requestOptions.headers.putIfAbsent(
-                'Authorization', () => 'Bearer ${SessionManager().get('token')}');
+                'Authorization', () => 'Bearer $token');
             handler.next(requestOptions);
           }
       ),
@@ -31,11 +32,6 @@ class DioHelper {
     try {
       final response = await dio.get(
         "${dio.options.baseUrl}/api/fruits/fruits_by_date",
-        options: Options(
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-          },
-        ),
         queryParameters: params
       );
       if (response.statusCode == 200) {
@@ -54,11 +50,6 @@ class DioHelper {
     try {
       final response = await dio.get(
           "${dio.options.baseUrl}/api/fruits",
-          options: Options(
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-            },
-          ),
           queryParameters: params
       );
       if (response.statusCode == 200) {
@@ -77,11 +68,6 @@ class DioHelper {
     try {
       final response = await dio.get(
           "${dio.options.baseUrl}/api/favorites",
-          options: Options(
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-            },
-          ),
           queryParameters: params
       );
       if (response.statusCode == 200) {
@@ -100,11 +86,6 @@ class DioHelper {
     try {
       final response = await dio.post(
           "${dio.options.baseUrl}/api/fruits/create_user_fruit",
-          options: Options(
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-            },
-          ),
           data: {
             'fruit': params
           }
@@ -125,11 +106,6 @@ class DioHelper {
     try {
       final response = await dio.post(
           "${dio.options.baseUrl}/api/favorites",
-          options: Options(
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-            },
-          ),
         queryParameters: params
       );
       if (response.statusCode == 201) {
@@ -147,11 +123,6 @@ class DioHelper {
     try {
       final response = await dio.delete(
           "${dio.options.baseUrl}/api/fruits/${id.toInt()}/destroy_user_fruit",
-          options: Options(
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-            },
-          ),
       );
       if (response.statusCode == 204) {
         return;
@@ -168,11 +139,6 @@ class DioHelper {
     try {
       final response = await dio.delete(
         "${dio.options.baseUrl}/api/favorites/${id.toInt()}",
-        options: Options(
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-          },
-        ),
       );
       if (response.statusCode == 204) {
         print("Successful destroyed");
@@ -189,11 +155,6 @@ class DioHelper {
     try {
       final response = await dio.get(
         "${dio.options.baseUrl}/api/fruits/${id.toInt()}",
-        options: Options(
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer ${await SessionManager().get('token')}',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         var jsonResponse = response.data['data'];
