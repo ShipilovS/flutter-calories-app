@@ -9,6 +9,7 @@ import 'package:flutter_calories_app/src/screens/form_fruit_create.dart';
 import 'package:flutter_calories_app/src/screens/fruit_show.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 // import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,28 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<UserFruit>>? _user_fruits;
   late Future<List<Fruit>>? _fruits;
   late Future<List<Fruit>>? _favorites;
+  int _pageSize = 10;
+  final PagingController<int, Fruit> _pagingController = PagingController(firstPageKey: 1);
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems = await DioHelper().getFavorites({
+        'page': pageKey,
+        'items': _pageSize
+      });
+      print(pageKey);
+      print(_pageSize);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        pageKey += 1;
+        _pagingController.appendPage(newItems, pageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
 
   @override
   void initState() {
@@ -43,6 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     _favorites = DioHelper().getFavorites({});
     _fruits = DioHelper().getFruits({});
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 
   List title_lists = ['Продукты', 'Календарь', 'Избранные'];
@@ -66,7 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     'selected_date': _selectedDate
                   });
                 } else if (index == 2) {
-                  _favorites = DioHelper().getFavorites({});
+                  _favorites = DioHelper().getFavorites({
+                    'page': 1,
+                    'items': _pageSize
+                  });
                 };
                 // currentTitle = title_lists[index];
               });
@@ -258,35 +294,18 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: EdgeInsets.symmetric(vertical: 22),
               alignment: Alignment.center,
-              child: Column(
-                  children: [
-                    Expanded(
-                      child: FutureBuilder(
-                        future: _favorites,
-                        builder: (context, snapshot) {
-                          if (snapshot.data == null) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else {
-                            return ListView.builder(
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  color: Colors.white,
-                                  child: ListTile(
-                                    leading: const Icon(Icons.list),
-                                    // Добавить флаг на беке, что выбран в избранное
-                                    title: Text("${snapshot.data![index].name.toString()}"),
-                                    // onTap: ,
-                                  ),
-                                );
-                              });
-                            }
-                        },
-                      ),
-                    )
-                  ]
+              child:  PagedListView<int, Fruit>(
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<Fruit>(
+                  itemBuilder: (context, item, index) => Container(
+                    color: Colors.white,
+                    child: ListTile(
+                      leading: const Icon(Icons.list),
+                      title: Text("${item.name.toString()}"),
+                      // onTap: ,
+                    ),
+                  ),
+                ),
               ),
             ),
           ][currentPageIndex],

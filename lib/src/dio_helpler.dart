@@ -65,6 +65,7 @@ class DioHelper {
   }
 
   Future<List<Fruit>> getFavorites(Map<String, dynamic> params) async {
+    print(params);
     try {
       final response = await dio.get(
           "${dio.options.baseUrl}/api/favorites",
